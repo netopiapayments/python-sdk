@@ -1,3 +1,4 @@
+[![NETOPIA SDK Publish](https://github.com/netopiapayments/python-sdk/actions/workflows/publish.yml/badge.svg)](https://github.com/netopiapayments/python-sdk/actions/workflows/publish.yml)
 
 # NETOPIA Payments Python SDK
 
