@@ -1,69 +1,87 @@
-name: Publish Python Package
+name: NETOPIA SDK Validation
 
 on:
-  release:
-    types: [created]
-
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'  
+  pull_request:
+    branches:
+      - main
   workflow_dispatch: 
 
 jobs:
-  lint_and_testpypi:
-    name: Lint and Publish to TestPyPI
+  analysis:
+    name: Code Analysis
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Set up Python environment
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.x"
 
-      # 3. Install linting tools
       - name: Install linting tools
         run: |
           python -m pip install --upgrade pip
           pip install flake8
 
-      # 4. Run linter
       - name: Run flake8 linter
         run: |
           flake8 .
 
-      # 5. Install build dependencies
-      - name: Install build dependencies
-        run: |
-          pip install build twine
-
-      # 6. Build package
-      - name: Build package
-        run: python -m build
-
-      # 7. Publish to TestPyPI
-      - name: Publish to TestPyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_TOKEN }}
-        run: |
-          twine upload --repository testpypi dist/*
-
-  publish_to_pypi:
-    name: Publish to PyPI
-    needs: lint_and_testpypi
+  test:
+    name: Run Unit Tests
     runs-on: ubuntu-latest
+    needs: analysis
 
     steps:
-      - name: Wait for manual approval
-        uses: hmarr/auto-approve-action@v2
-        with:
-          description: "Click 'Run workflow' to approve publishing to PyPI"
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Publish to PyPI
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Install test dependencies
         run: |
-          twine upload dist/*
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: |
+          python -m unittest discover -s tests
+
+  release:
+    name: Create Release
+    if: github.ref_type == 'tag'  # Run only for tag pushes
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      # Checkout code
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Extract tag name
+      - name: Get Tag Name
+        id: get_tag
+        run: echo "TAG_NAME=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+
+      # Create GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG_NAME }}
+          name: Release ${{ env.TAG_NAME }}
+          body: |
+            ## What's Changed
+            - Automated release for version ${{ env.TAG_NAME }}.
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
