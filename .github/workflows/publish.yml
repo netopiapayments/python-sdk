@@ -1,0 +1,69 @@
+name: Publish Python Package
+
+on:
+  release:
+    types: [created]
+
+  workflow_dispatch: 
+
+jobs:
+  lint_and_testpypi:
+    name: Lint and Publish to TestPyPI
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python environment
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      # 3. Install linting tools
+      - name: Install linting tools
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8
+
+      # 4. Run linter
+      - name: Run flake8 linter
+        run: |
+          flake8 .
+
+      # 5. Install build dependencies
+      - name: Install build dependencies
+        run: |
+          pip install build twine
+
+      # 6. Build package
+      - name: Build package
+        run: python -m build
+
+      # 7. Publish to TestPyPI
+      - name: Publish to TestPyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TEST_API_TOKEN }}
+        run: |
+          twine upload --repository testpypi dist/*
+
+  publish_to_pypi:
+    name: Publish to PyPI
+    needs: lint_and_testpypi
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Wait for manual approval
+        uses: hmarr/auto-approve-action@v2
+        with:
+          description: "Click 'Run workflow' to approve publishing to PyPI"
+
+      - name: Publish to PyPI
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          twine upload dist/*

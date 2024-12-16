@@ -15,7 +15,10 @@ from .responses.models import (
 class PaymentService:
     def __init__(self, client: PaymentClient):
         self.client = client
-        self.transport = Transport(base_url=self.client.base_url(), api_key=self.client.config.api_key)
+        self.transport = Transport(
+            base_url=self.client.base_url(),
+            api_key=self.client.config.api_key
+        )
 
     def start_payment(self, request: StartPaymentRequest) -> StartPaymentResponse:
         if not request.order:

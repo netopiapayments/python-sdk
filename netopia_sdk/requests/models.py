@@ -1,11 +1,13 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
+
 @dataclass
 class PaymentOptions:
     installments: int
     bonus: int
     split: List[Dict[str, float]] = field(default_factory=list)
+
 
 @dataclass
 class Instrument:
@@ -17,11 +19,13 @@ class Instrument:
     token: str
     clientID: str
 
+
 @dataclass
 class PaymentData:
     options: PaymentOptions
     instrument: Instrument
     data: Dict[str, str]
+
 
 @dataclass
 class BillingData:
@@ -36,6 +40,7 @@ class BillingData:
     postalCode: str
     details: str
 
+
 @dataclass
 class ShippingData:
     email: str
@@ -49,6 +54,7 @@ class ShippingData:
     postalCode: str
     details: str
 
+
 @dataclass
 class ProductsData:
     name: str
@@ -56,6 +62,7 @@ class ProductsData:
     category: str
     price: float
     vat: float
+
 
 @dataclass
 class OrderData:
@@ -72,6 +79,7 @@ class OrderData:
     installments: Dict[str, object]
     data: Dict[str, str]
 
+
 @dataclass
 class ConfigData:
     emailTemplate: str
@@ -81,22 +89,26 @@ class ConfigData:
     redirectUrl: str
     language: str
 
+
 @dataclass
 class StartPaymentRequest:
     config: ConfigData
     payment: PaymentData
     order: OrderData
 
+
 @dataclass
 class PaymentStatusParam:
     posID: str
     ntpID: str
+
 
 @dataclass
 class PaymentVerifyAuthParam:
     authenticationToken: str
     ntpID: str
     formData: Dict[str, str]
+
 
 @dataclass
 class IpnParams:

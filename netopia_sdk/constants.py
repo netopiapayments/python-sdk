@@ -1,9 +1,11 @@
 from enum import IntEnum
 
+
 class ErrorType(IntEnum):
     ERROR_TYPE_NONE = 0x00
     ERROR_TYPE_TEMPORARY = 0x01
     ERROR_TYPE_PERMANENT = 0x02
+
 
 class ErrorCode(IntEnum):
     E_VERIFICATION_FAILED_GENERAL = 0x10000101
@@ -13,6 +15,7 @@ class ErrorCode(IntEnum):
     E_VERIFICATION_FAILED_AUDIENCE = 0x10000105
     E_VERIFICATION_FAILED_TAINTED_PAYLOAD = 0x10000106
     E_VERIFICATION_FAILED_PAYLOAD_FORMAT = 0x10000107
+
 
 class PaymentStatus(IntEnum):
     STATUS_NEW = 1

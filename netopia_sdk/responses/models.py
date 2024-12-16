@@ -1,5 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Optional, Dict, List
+
 
 @dataclass
 class ErrorDetails:
@@ -8,11 +9,13 @@ class ErrorDetails:
     field: str
     attributes: Dict[str, str]
 
+
 @dataclass
 class ErrorWithDetails:
     code: str
     message: str
     details: List[ErrorDetails]
+
 
 @dataclass
 class PaymentResponseData:
@@ -31,16 +34,19 @@ class PaymentResponseData:
     instrument: Optional[Dict] = None
     data: Optional[Dict[str, str]] = None
 
+
 @dataclass
 class ApiResponse:
     code: Optional[str] = None
     message: Optional[str] = None
     error: Optional[ErrorWithDetails] = None
 
+
 @dataclass
 class StartPaymentResponse(ApiResponse):
     payment: Optional[PaymentResponseData] = None
     customerAction: Optional[Dict] = None
+
 
 @dataclass
 class StatusResponse(ApiResponse):
@@ -51,9 +57,11 @@ class StatusResponse(ApiResponse):
     payment: Optional[PaymentResponseData] = None
     customerAction: Optional[Dict] = None
 
+
 @dataclass
 class VerifyAuthResponse(ApiResponse):
     payment: Optional[PaymentResponseData] = None
+
 
 @dataclass
 class IpnVerifyResponse:

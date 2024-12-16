@@ -1,7 +1,10 @@
 from netopia_sdk.config import Config
 from netopia_sdk.client import PaymentClient
 from netopia_sdk.payment import PaymentService
-from netopia_sdk.requests.models import StartPaymentRequest, ConfigData, PaymentData, PaymentOptions, Instrument, OrderData, BillingData, ShippingData, ProductsData
+from netopia_sdk.requests.models import (
+    StartPaymentRequest, ConfigData, PaymentData, PaymentOptions, Instrument,
+    OrderData, BillingData, ShippingData, ProductsData
+)
 
 # init configuration
 config = Config(
@@ -73,7 +76,11 @@ start_payment_request = StartPaymentRequest(
             postalCode="010101",
             details="Some details",
         ),
-        products=[ProductsData(name="Product1", code="P1", category="Category1", price=10.0, vat=0.0)],
+        products=[
+            ProductsData(
+                name="Product1", code="P1", category="Category1", price=10.0, vat=0.0
+            )
+        ],
         installments={"selected": 0, "available": []},
         data={},
     ),

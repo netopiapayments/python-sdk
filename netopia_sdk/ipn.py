@@ -1,8 +1,7 @@
 import json
 import base64
 import hashlib
-from typing import Optional
-from jwt import decode, PyJWKClient, InvalidTokenError, InvalidSignatureError
+from jwt import decode, InvalidTokenError, InvalidSignatureError
 from .constants import ErrorType, ErrorCode, PaymentStatus
 from .errors import (
     MissingVerificationTokenError,
@@ -17,13 +16,21 @@ from .errors import (
 )
 from responses.models import IpnVerifyResponse
 
+
 class IpnVerifier:
-    def __init__(self, pos_signature: str, pos_signature_set: list, public_key_str: str, hash_method: str = "sha512", alg: str = "RS512"):
+    def __init__(
+        self,
+        pos_signature: str,
+        pos_signature_set: list,
+        public_key_str: str,
+        hash_method: str = "sha512",
+        alg: str = "RS512"
+    ):
         self.pos_signature = pos_signature
         self.pos_signature_set = set(pos_signature_set)
         self.public_key_str = public_key_str
-        self.hash_method = hash_method or "sha512"
-        self.alg = alg or "RS512"
+        self.hash_method = hash_method
+        self.alg = alg
 
     def verify(self, verification_token: str, raw_data: str) -> IpnVerifyResponse:
         output = IpnVerifyResponse(
@@ -46,9 +53,6 @@ class IpnVerifier:
             header = json.loads(header_bytes)
         except Exception:
             raise WrongVerificationTokenError("Wrong token header")
-
-        if header.get("typ") != "JWT":
-            raise WrongVerificationTokenError("Wrong_Token_Type")
 
         if not self.public_key_str:
             return output
