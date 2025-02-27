@@ -42,11 +42,11 @@ class PaymentService:
         endpoint = "/operation/status"
         return self.transport.send_request(endpoint, request, StatusResponse)
 
-    def verify_auth(self, auth_token: str, ntpID: str, pa_res: str) -> VerifyAuthResponse:
+    def verify_auth(self, authenticationToken: str, ntpID: str, formData: dict) -> VerifyAuthResponse:
         request = PaymentVerifyAuthParam(
-            authenticationToken=auth_token,
+            authenticationToken=authenticationToken,
             ntpID=ntpID,
-            formData={"paRes": pa_res},
+            formData=formData,
         )
 
         endpoint = "/payment/card/verify-auth"
