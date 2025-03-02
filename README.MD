@@ -239,7 +239,7 @@ The SDK provides structured error handling with pre-defined error classes. Commo
 
 ```python
 try:
-    response = payment_service.get_status(ntpID="ntpID-123456", orderID="orderID-12345")
+    response = payment_service.get_status(ntpID=payment_session.ntp_id, orderID=payment_session.order_id)
 except MissingAPIKeyError:
     print("API Key is missing!")
 except Exception as e:
