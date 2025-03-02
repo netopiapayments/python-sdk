@@ -1,3 +1,4 @@
+import uuid
 from .client import PaymentClient
 from .transport import Transport
 from .requests.models import (
@@ -51,3 +52,10 @@ class PaymentService:
 
         endpoint = "/payment/card/verify-auth"
         return self.transport.send_request(endpoint, request, VerifyAuthResponse)
+
+
+class PaymentSession:
+    def __init__(self):
+        self.order_id = str(uuid.uuid4())
+        self.ntp_id = None
+        self.auth_token = None

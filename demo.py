@@ -1,6 +1,6 @@
 from netopia_sdk.config import Config
 from netopia_sdk.client import PaymentClient
-from netopia_sdk.payment import PaymentService
+from netopia_sdk.payment import PaymentService, PaymentSession
 from netopia_sdk.requests.models import (
     StartPaymentRequest, ConfigData, PaymentData, PaymentOptions, Instrument,
     OrderData, BillingData, ShippingData, ProductsData
@@ -17,9 +17,10 @@ config = Config(
     pos_signature_set=["POS_SIGNATURE"],
 )
 
-# create client and service
+# Create client, service and session
 client = PaymentClient(config)
 payment_service = PaymentService(client)
+payment_session = PaymentSession()
 
 # example request
 start_payment_request = StartPaymentRequest(
@@ -48,7 +49,7 @@ start_payment_request = StartPaymentRequest(
         ntpID=None,
         posSignature=None,
         dateTime="2024-12-13T12:00:00Z",
-        orderID="ORDER123",
+        orderID=payment_session.order_id,
         description="Test order",
         amount=10.0,
         currency="RON",
@@ -86,5 +87,24 @@ start_payment_request = StartPaymentRequest(
     ),
 )
 
+# ✅ Start Payment
 response = payment_service.start_payment(start_payment_request)
-print(response)
+print("\nStart Payment Response:", response)
+
+# ✅ Salvare variabile în obiectul payment_session
+payment_session.ntp_id = response.payment.get('ntpID')
+payment_session.auth_token = response.payment.get('data', {}).get('AuthCode')
+
+# ✅ Get Payment Status
+response = payment_service.get_status(
+    ntpID=payment_session.ntp_id,
+    orderID=payment_session.order_id)
+
+print("\nOrder Status Response:", response)
+
+# ✅ Verify Auth
+response = payment_service.verify_auth(
+    authenticationToken=payment_session.auth_token,
+    ntpID=payment_session.ntp_id,
+)
+print("\nVerifyAuth Response:", response)

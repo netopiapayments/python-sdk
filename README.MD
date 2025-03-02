@@ -21,6 +21,7 @@ The **NETOPIA Payments Python SDK** provides seamless integration with the **NET
     - [IPN Verification](#ipn-verification)
 - [Error Handling](#error-handling)
 - [Examples](#examples)
+- [Test Cards](#test-cards)
 - [Useful Links](#useful-links)
 
 ---
@@ -121,6 +122,11 @@ from netopia_sdk.requests.models import (
     OrderData, BillingData, ProductsData,
 )
 
+# Create client, service and session
+client = PaymentClient(config)
+payment_service = PaymentService(client)
+payment_session = PaymentSession()
+
 start_payment_request = StartPaymentRequest(
     config=ConfigData(
         emailTemplate="default",
@@ -141,7 +147,7 @@ start_payment_request = StartPaymentRequest(
         ),
     ),
     order=OrderData(
-        orderID="R12345",
+        orderID=payment_session.order_id,
         amount=100.0,
         currency="RON",
         description="Test Order",
@@ -159,8 +165,13 @@ start_payment_request = StartPaymentRequest(
     ),
 )
 
+# ✅ Start Payment
 response = payment_service.start_payment(start_payment_request)
-print("Start Payment Response:", response)
+print("\nStart Payment Response:", response)
+
+# ✅ Save variables in payment session object
+payment_session.ntp_id = response.payment.get('ntpID')
+payment_session.auth_token = response.payment.get('data', {}).get('AuthCode')
 ```
 
 ---
@@ -170,8 +181,10 @@ print("Start Payment Response:", response)
 Retrieves the status of an order.
 
 ```python
-response = payment_service.get_status(ntpID="ntpID-123456", orderID="orderID-12345")
-print("Order Status Response:", response)
+response = payment_service.get_status(
+    ntpID=payment_session.ntp_id,
+    orderID=payment_session.order_id)
+print("\nOrder Status Response:", response)
 ```
 
 ---
@@ -182,11 +195,10 @@ Handles 3D Secure verification for transactions.
 
 ```python
 response = payment_service.verify_auth(
-    authenticationToken="authToken123",
-    ntpID="ntpID-123456",
-    formData={"paRes": "paResData"},
+    authenticationToken=payment_session.auth_token,
+    ntpID=payment_session.ntp_id,
 )
-print("VerifyAuth Response:", response)
+print("\nVerifyAuth Response:", response)
 ```
 
 ---
@@ -239,6 +251,23 @@ except Exception as e:
 ## **Examples**
 
 To see examples in action, check out `demo.py` in the repository for a detailed playground.
+
+---
+
+## **Test Cards**
+
+Use these test cards in the sandbox environment:
+
+| Card Type                        | Card Number       | CVV | Expiry Date          | Name |
+|-----------------------------------|-------------------|-----|---------------------|------|
+| **Accepted, Garanti Bonuscard**   | 9900004810225098 | 111 | Any future date     | Test |
+| **Accepted, Cardavantaj**         | 99110059532258   | 111 | Any future date     | Test |
+| **Expired Card**                  | 9900541631437790 | 111 | Any future date     | Test |
+| **Insufficient Funds**            | 9900518572831942 | 111 | Any future date     | Test |
+| **Incorrect CVV**                 | 9900827979991500 | 111 | Any future date     | Test |
+| **Fraud Check**                   | 9900005786662552 | 111 | Any future date     | Test |
+| **Transaction Not Allowed**        | 9900576270414197 | 111 | Any future date     | Test |
+| **Issuer Error**                   | 9900130597497640 | 111 | Any future date     | Test |
 
 ---
 
