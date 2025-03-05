@@ -87,24 +87,5 @@ start_payment_request = StartPaymentRequest(
     ),
 )
 
-# ✅ Start Payment
 response = payment_service.start_payment(start_payment_request)
-print("\nStart Payment Response:", response)
-
-# ✅ Salvare variabile în obiectul payment_session
-payment_session.ntp_id = response.payment.get('ntpID')
-payment_session.auth_token = response.payment.get('data', {}).get('AuthCode')
-
-# ✅ Get Payment Status
-response = payment_service.get_status(
-    ntpID=payment_session.ntp_id,
-    orderID=payment_session.order_id)
-
-print("\nOrder Status Response:", response)
-
-# ✅ Verify Auth
-response = payment_service.verify_auth(
-    authenticationToken=payment_session.auth_token,
-    ntpID=payment_session.ntp_id,
-)
-print("\nVerifyAuth Response:", response)
+print("Start Payment Response:", response)
