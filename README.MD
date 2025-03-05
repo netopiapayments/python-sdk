@@ -121,6 +121,11 @@ from netopia_sdk.requests.models import (
     OrderData, BillingData, ProductsData,
 )
 
+# Create client, service and session
+client = PaymentClient(config)
+payment_service = PaymentService(client)
+payment_session = PaymentSession()
+
 start_payment_request = StartPaymentRequest(
     config=ConfigData(
         emailTemplate="default",
@@ -141,7 +146,7 @@ start_payment_request = StartPaymentRequest(
         ),
     ),
     order=OrderData(
-        orderID="R12345",
+        orderID=payment_session.order_id,
         amount=100.0,
         currency="RON",
         description="Test Order",
@@ -162,6 +167,12 @@ start_payment_request = StartPaymentRequest(
 response = payment_service.start_payment(start_payment_request)
 print("Start Payment Response:", response)
 ```
+Save variables in payment_session object for later use in GetStatus and VerifyAuth
+
+```python
+payment_session.ntp_id = response.payment.get('ntpID')
+payment_session.auth_token = response.payment.get('data', {}).get('AuthCode')
+```
 
 ---
 
@@ -170,7 +181,7 @@ print("Start Payment Response:", response)
 Retrieves the status of an order.
 
 ```python
-response = payment_service.get_status(ntpID="ntpID-123456", orderID="orderID-12345")
+response = payment_service.get_status(ntpID=payment_session.ntp_id, orderID=payment_session.order_id)
 print("Order Status Response:", response)
 ```
 
@@ -182,8 +193,8 @@ Handles 3D Secure verification for transactions.
 
 ```python
 response = payment_service.verify_auth(
-    authenticationToken="authToken123",
-    ntpID="ntpID-123456",
+    authenticationToken=payment_session.auth_token,
+    ntpID=payment_session.ntp_id,
     formData={"paRes": "paResData"},
 )
 print("VerifyAuth Response:", response)
@@ -227,7 +238,7 @@ The SDK provides structured error handling with pre-defined error classes. Commo
 
 ```python
 try:
-    response = payment_service.get_status(ntpID="ntpID-123456", orderID="orderID-12345")
+    response = payment_service.get_status(ntpID=payment_session.ntp_id, orderID=payment_session.order_id)
 except MissingAPIKeyError:
     print("API Key is missing!")
 except Exception as e:
