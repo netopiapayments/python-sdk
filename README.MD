@@ -163,6 +163,9 @@ response = payment_service.start_payment(start_payment_request)
 print("Start Payment Response:", response)
 ```
 
+### Note: If the instrument is set to None, NETOPIA will handle the payment processing. 
+### if the instrument is set with card details, it is mandatory for the site to implement the PCI DSS (Payment Card Industry Data Security Standard).
+
 ---
 
 #### **GetStatus**

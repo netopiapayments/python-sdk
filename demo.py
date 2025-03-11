@@ -8,13 +8,14 @@ from netopia_sdk.requests.models import (
 
 # init configuration
 config = Config(
-    api_key="YOUR_API_KEY",
-    pos_signature="POS_SIGNATURE",
+    api_key="api_key",
+    pos_signature="pos_signature",
     is_live=False,
-    notify_url="https://your_notify_url",
-    redirect_url="https://your_redirect_url",
-    public_key_str="-----BEGIN PUBLIC KEY-----\n...\n-----END PUBLIC KEY-----",
-    pos_signature_set=["POS_SIGNATURE"],
+    notify_url="https://notify_url",
+    redirect_url="https://redirect_url",
+    public_key_str="-----BEGIN CERTIFICATE-----CERTIFICATE-----END CERTIFICATE-----",
+    pos_signature_set=["pos_signature"],
+    private_key_str="-----BEGIN PRIVATE KEY-----PRIVATE_KEY-----END PRIVATE KEY-----"
 )
 
 # create client and service
@@ -33,22 +34,25 @@ start_payment_request = StartPaymentRequest(
     ),
     payment=PaymentData(
         options=PaymentOptions(installments=0, bonus=0),
+        # You can collect the card details from the user and pass them here OR
+        # set instrument=None to let Netopia handle the payment form
         instrument=Instrument(
             type="card",
-            account="4111111111111111",
+            account="9900004810225098",
             expMonth=12,
             expYear=2050,
-            secretCode="123",
+            secretCode="111",
             token="",
             clientID="",
         ),
+        instrument=None,
         data={},
     ),
     order=OrderData(
         ntpID=None,
         posSignature=None,
         dateTime="2024-12-13T12:00:00Z",
-        orderID="ORDER123",
+        orderID="6122331273",
         description="Test order",
         amount=10.0,
         currency="RON",
@@ -87,4 +91,3 @@ start_payment_request = StartPaymentRequest(
 )
 
 response = payment_service.start_payment(start_payment_request)
-print(response)

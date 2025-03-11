@@ -22,7 +22,6 @@ class PaymentResponseData:
     method: Optional[str] = None
     allowedMethods: Optional[List[str]] = None
     ntpID: Optional[str] = None
-    rrn: Optional[str] = None
     status: Optional[int] = None
     amount: Optional[float] = None
     currency: Optional[str] = None

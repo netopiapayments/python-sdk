@@ -23,7 +23,7 @@ class Instrument:
 @dataclass
 class PaymentData:
     options: PaymentOptions
-    instrument: Instrument
+    instrument: Optional[Instrument] 
     data: Dict[str, str]
 
 
