@@ -101,6 +101,7 @@ class StartPaymentRequest:
 class PaymentStatusParam:
     posID: str
     ntpID: str
+    orderID: str
 
 
 @dataclass
