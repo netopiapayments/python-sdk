@@ -14,7 +14,8 @@ from .errors import (
     MissingHashMethodError,
     UnsupportedHashMethodError
 )
-from responses.models import IpnVerifyResponse
+
+from .responses.models import IpnVerifyResponse
 
 
 class IpnVerifier:
@@ -95,7 +96,7 @@ class IpnVerifier:
 
             output.status = status
             output.message = message
-            # No error
+
             return output
 
         except (InvalidTokenError, InvalidSignatureError, KeyError, ValueError) as e:
