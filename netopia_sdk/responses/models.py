@@ -55,6 +55,7 @@ class StatusResponse(ApiResponse):
     order: Optional[Dict] = None
     payment: Optional[PaymentResponseData] = None
     customerAction: Optional[Dict] = None
+    card: Optional[Dict] = None
 
 
 @dataclass
