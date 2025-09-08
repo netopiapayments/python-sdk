@@ -31,7 +31,7 @@ class TestPaymentClient(unittest.TestCase):
     def test_base_url_for_live(self):
         self.config.is_live = True
         self.client = PaymentClient(self.config)
-        self.assertEqual(self.client.base_url(), "https://secure.netopia-payments.com")
+        self.assertEqual(self.client.base_url(), "https://secure.mobilpay.ro/pay")
 
     def test_invalid_config_raises_value_error(self):
         with self.assertRaises(ValueError):

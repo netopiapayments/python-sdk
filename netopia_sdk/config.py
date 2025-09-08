@@ -54,7 +54,7 @@ class Config:
     @property
     def base_url(self) -> str:
         return (
-            "https://secure.netopia-payments.com"
+            "https://secure.mobilpay.ro/pay"
             if self.is_live
             else "https://secure-sandbox.netopia-payments.com"
         )
